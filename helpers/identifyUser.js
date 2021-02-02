@@ -1,16 +1,14 @@
 // Instruments
 import nookies from 'nookies';
+import { userTypes } from '../bus/user/types';
+
 const fs = require('fs').promises;
 
 const getUniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
 
 export const identifyUser = async (context) => {
-  let
-    user = {},
-    dataUsers = [],
-    isGuest = true,
-    isFriend = false,
-    isFamilyMember = false;
+  let dataUsers = [];
+  let user = {};
 
   const cookies = nookies.get(context);
   const userIdFromClient = cookies.userId;
@@ -23,7 +21,7 @@ export const identifyUser = async (context) => {
   }
 
   // finding user by userId
-  const existingUserIdx = dataUsers.findIndex(item => item.userId == userIdFromClient);
+  const existingUserIdx = dataUsers.findIndex(item => item.userId === userIdFromClient);
 
   if (existingUserIdx >= 0) {
     // existing user
@@ -33,7 +31,7 @@ export const identifyUser = async (context) => {
     // new user
     user = {
       userId: getUniqueId(),
-      visitCounts: 1
+      visitCounts: 0,
     };
     dataUsers.push(user);
     nookies.set(context, 'userId', user.userId, { maxAge: 2592000000, httpOnly: true });
@@ -47,15 +45,8 @@ export const identifyUser = async (context) => {
 
   const { visitCounts } = user;
 
-  isGuest = visitCounts < 3;
-  isFriend = visitCounts >= 3 && visitCounts < 5;
-  isFamilyMember = visitCounts >= 5;
+  user.userType = (visitCounts >= 5) ? userTypes.USER_IS_FAMILY_MEMBER : 
+    (visitCounts >=3 ) ? userTypes.USER_IS_FRIEND : userTypes.USER_IS_GUEST;
 
-  return {
-    isGuest,
-    isFriend,
-    isFamilyMember,
-    visitCounts,
-    userId: user.userId,
-  }
+  return user;
 }

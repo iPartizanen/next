@@ -7,7 +7,7 @@ import { initialDispatcher } from '../init/initialDispatcher';
 import { identifyUser } from "../helpers/identifyUser";
 
 // Components
-import Message from '../components/Message';
+import { User as UserComponent } from '../components/User';
 import Menu from '../components/Menu';
 
 // Actions
@@ -31,18 +31,18 @@ export const getServerSideProps = async (context) => {
   }
 };
 
-const Home = (props) => {
-  const { initialReduxState } = props;
-  const { visitCounts, userType } = initialReduxState.user;
+const User = ({ initialReduxState }) => {
+
+  const { userId, visitCounts, userType } = initialReduxState.user;
   const dispatch = useDispatch();
   dispatch(userActions.fillUser({ visitCounts }));
 
   return (
     <>
-      <Menu currentPage={'/'}/>
-      <Message /> 
+      <Menu currentPage={'/user'}/>
+      <UserComponent />
     </>
   );
 };
 
-export default Home;
+export default User;
