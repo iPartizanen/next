@@ -1,19 +1,31 @@
-const News = ({news}) => {
+// Core
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
-  if (!news) { return null; };
+// Components
+import { Article } from '../Article';
+
+// Selectors
+import { selectNews } from '../../bus/news/selectors';
+
+export const News = () => {
+  const news = useSelector(selectNews);
+
+  if (!news) {
+    const router = useRouter();
+    useEffect(()=>{ router.replace('/'); });
+    return null;
+  };
 
   const listItems = news.map((item) => {
-
-      const d = new Date(item.dateOfReceiving);
-
-      return (
-        <li key={item.id}>
-        <strong>{item.id}</strong> {d.toLocaleDateString()}<br/>
-        {item.content}
-        </li>
-      )
-    }
-  );
+    return (
+      <li key={item.id}>
+        <Article link='true' {...item}/>
+        <p></p>
+      </li>
+    )
+  });
  
   return (
     <div>
@@ -23,6 +35,4 @@ const News = ({news}) => {
         </ul>
     </div>
   );
-};
-  
-export default News;
+}
