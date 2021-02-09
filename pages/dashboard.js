@@ -9,6 +9,7 @@ import { identifyUser } from '../helpers/identifyUser';
 import { readNews } from '../helpers/readNews';
 import { readDiscounts } from '../helpers/readDiscounts';
 import { readCars } from '../helpers/readCars';
+import { initialReduxStateProps } from '../helpers/initialReduxStateProps';
 
 // Components
 import { Menu } from '../components/Menu';
@@ -19,20 +20,14 @@ import { selectDiscounts } from '../bus/discounts/selectors';
 import { selectCars } from '../bus/cars/selectors';
 
 export const getServerSideProps = async (context) => {
-  const store = await initialDispatcher(context, initializeStore());
+  const { store, stateUpdates } = await initialDispatcher(context, initializeStore());
 
   await identifyUser(context, store);
   await readNews(store);
   await readDiscounts(store);
   await readCars(store);
 
-  const initialReduxState = store.getState();
-
-  return {
-    props: {
-      initialReduxState,
-    }
-  }
+  return initialReduxStateProps (store, stateUpdates);
 };
 
 const Dashboard = () => {
