@@ -2,19 +2,30 @@
 import nookies from 'nookies';
 import { userTypes } from '../bus/user/types';
 
+// Actions
+import { userActions } from '../bus/user/actions';
+
 const fs = require('fs').promises;
+
+const USER_FILE_NAME = './data/users.json';
 
 const getUniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
 
-export const identifyUser = async (context) => {
+const calculateUserType = (visitCounts) =>
+  (visitCounts >= 5) ? userTypes.USER_IS_FAMILY_MEMBER : 
+    (visitCounts >=3 ) ? userTypes.USER_IS_FRIEND 
+      : userTypes.USER_IS_GUEST;
+
+export const identifyUser = async (context, store) => {
   let dataUsers = [];
   let user = {};
 
   const cookies = nookies.get(context);
   const userIdFromClient = cookies.userId;
+  const raisedUserType = cookies.raisedUserType;  // if userType has been raised
 
   try {
-    const fileUsers = await fs.readFile('./data/users.json', 'utf-8');
+    const fileUsers = await fs.readFile(USER_FILE_NAME, 'utf-8');
     dataUsers = fileUsers ? JSON.parse(fileUsers) : []; // handle logic with empty files    
   } catch (error) {
     console.error(error.message)
@@ -28,9 +39,9 @@ export const identifyUser = async (context) => {
     dataUsers[existingUserIdx].visitCounts++;
     user = dataUsers[existingUserIdx];
   } else {
-    // new user
+    // new user or users file was deleted
     user = {
-      userId: getUniqueId(),
+      userId: userIdFromClient ? userIdFromClient : getUniqueId(),
       visitCounts: 0,
     };
     dataUsers.push(user);
@@ -38,15 +49,38 @@ export const identifyUser = async (context) => {
   };
 
   try {
-    await fs.writeFile('./data/users.json', JSON.stringify(dataUsers, null, 4));
+    await fs.writeFile(USER_FILE_NAME, JSON.stringify(dataUsers, null, 4));
   } catch (error) {
     console.error(error.message)
   }
 
-  const { visitCounts } = user;
+  // userType based on visitCounts
+  let userType = calculateUserType(user.visitCounts);
 
-  user.userType = (visitCounts >= 5) ? userTypes.USER_IS_FAMILY_MEMBER : 
-    (visitCounts >=3 ) ? userTypes.USER_IS_FRIEND : userTypes.USER_IS_GUEST;
+  // received userType from client (raised)
+  if (raisedUserType) {
+    const pageRefreshed = !context.req.headers.referer;
+
+    if (pageRefreshed) {
+      nookies.destroy(context, 'raisedUserType');
+    } else {
+      
+      if ((userType === userTypes.USER_IS_GUEST 
+        && raisedUserType !== userTypes.USER_IS_GUEST
+      ) || (
+        userType === userTypes.USER_IS_FRIEND
+        && raisedUserType === userTypes.USER_IS_FAMILY_MEMBER
+      )) {
+        userType = raisedUserType;
+      } else {
+        nookies.destroy(context, 'raisedUserType');
+      };
+    };
+  };
+  
+  user.userType = userType;
+
+  store.dispatch(userActions.fillUser(user));
 
   return user;
 }

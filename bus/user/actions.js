@@ -6,12 +6,12 @@ export const userActions = {
     type: types.FILL_USER,
     payload: user,
   }),
-  setVisitCounts: (user) => ({
+  setVisitCounts: (visitCounts) => ({
     type: types.SET_VISIT_COUNTS,
-    payload: user,
+    payload: { visitCounts },
   }),
-  setUserType: (user) => ({
+  setUserType: (userType) => ({
     type: types.SET_USER_TYPE,
-    payload: user,
+    payload: { userType },
   }),
 };

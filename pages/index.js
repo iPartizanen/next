@@ -1,45 +1,30 @@
-// Core
-import { useDispatch } from 'react-redux';
-
 // Instruments
 import { initializeStore } from '../init/store';
 import { initialDispatcher } from '../init/initialDispatcher';
 import { identifyUser } from "../helpers/identifyUser";
 
 // Components
-import Message from '../components/Message';
-import Menu from '../components/Menu';
-
-// Actions
-import { userActions } from '../bus/user/actions';
+import { Message } from '../components/Message';
+import { Menu } from '../components/Menu';
 
 export const getServerSideProps = async (context) => {
   const store = await initialDispatcher(context, initializeStore());
-
-  const { userId, visitCounts, userType } = await identifyUser(context);
-
-  store.dispatch(userActions.fillUser({ userId }));
-  store.dispatch(userActions.setVisitCounts({ visitCounts }));
-  store.dispatch(userActions.setUserType({ userType }));
+  await identifyUser(context, store)
 
   const initialReduxState = store.getState();
- 
+
   return {
     props: {
-      initialReduxState,      
+      initialReduxState,
     }
   }
 };
 
-const Home = (props) => {
-  const { initialReduxState } = props;
-  const { visitCounts, userType } = initialReduxState.user;
-  const dispatch = useDispatch();
-  dispatch(userActions.fillUser({ visitCounts }));
+const Home = () => {
 
   return (
     <>
-      <Menu currentPage={'/'}/>
+      <Menu />
       <Message /> 
     </>
   );

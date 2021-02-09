@@ -1,71 +1,77 @@
 // Core
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import Link from 'next/link';
 
 // Instruments
 import { initializeStore } from '../init/store';
 import { initialDispatcher } from '../init/initialDispatcher';
 import { identifyUser } from '../helpers/identifyUser';
-import { readFeedData } from '../helpers/readFeedData';
-import { userTypes } from '../bus/user/types';
+import { readNews } from '../helpers/readNews';
+import { readDiscounts } from '../helpers/readDiscounts';
+import { readCars } from '../helpers/readCars';
 
 // Components
-import News from '../components/News';
-import Discounts from '../components/Discounts';
-import Cars from '../components/Cars';
-import Menu from '../components/Menu';
+import { Menu } from '../components/Menu';
 
-// Actions
-import { userActions } from '../bus/user/actions';
+// Selectors
+import { selectNews } from '../bus/news/selectors';
+import { selectDiscounts } from '../bus/discounts/selectors';
+import { selectCars } from '../bus/cars/selectors';
 
 export const getServerSideProps = async (context) => {
   const store = await initialDispatcher(context, initializeStore());
 
-  const { userId, visitCounts, userType } = await identifyUser(context);
-
-  store.dispatch(userActions.fillUser({ userId }));
-  store.dispatch(userActions.setVisitCounts({ visitCounts }));
-  store.dispatch(userActions.setUserType({ userType }));
+  await identifyUser(context, store);
+  await readNews(store);
+  await readDiscounts(store);
+  await readCars(store);
 
   const initialReduxState = store.getState();
-
-  // dashboard
-  const news = await readFeedData('./data/news.json');
-
-  const discounts = (userType === userTypes.USER_IS_FRIEND 
-    || userType === userTypes.USER_IS_FAMILY_MEMBER) 
-      && await readFeedData('./data/discounts.json');
-
-  const cars = (userType === userTypes.USER_IS_FAMILY_MEMBER) 
-    && await readFeedData('./data/cars.json');
 
   return {
     props: {
       initialReduxState,
-      news: { news },
-      discounts: { discounts },
-      cars: { cars },
-      currentPage: '/dashboard',
     }
   }
 };
 
-const Dashboard = (props) => {
-  const {
-    news,
-    discounts,
-    cars,
-    initialReduxState,
-  } = props;
-  const { visitCounts } = initialReduxState.user;
-  const dispatch = useDispatch();
-  dispatch(userActions.fillUser({ visitCounts }));
+const Dashboard = () => {
+
+  const generateLinks = (items, path) => {
+    let links = '';
+    
+    if (!(items[0] === null)) {  // foribidden flag
+
+      links = items.map(({ id }) => {
+        const link = path + `/${encodeURIComponent(id)}`;
+
+        return (
+          <dt key={link}>
+            <Link href={link}><a>{link}</a></Link><br/>
+          </dt>
+        )
+      });
+
+      links = <dl>{links}</dl>;
+    };
+    return links;
+  };
+
+  const news = useSelector(selectNews);
+  const newsLinks = generateLinks(news, '/news');
+
+  const discounts = useSelector(selectDiscounts);
+  const discountsLinks = generateLinks(discounts, '/discounts');
+
+  const cars = useSelector(selectCars);
+  const carsLinks = generateLinks(cars, '/cars');
 
   return (
     <>
-      <Menu currentPage={'/dashboard'}/>  
-      <News {...news} />
-      <Discounts {...discounts} />
-      <Cars {...cars} />
+      <Menu />  
+      {newsLinks}
+      {discountsLinks}
+      {carsLinks}
     </>
   );
 };

@@ -1,19 +1,31 @@
-const Cars = ({cars}) => {
+// Core
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
-  if (!cars) { return null; };
+// Components
+import { Car } from '../Car';
+
+// Selectors
+import { selectCars } from '../../bus/cars/selectors';
+
+export const Cars = () => {
+  const cars = useSelector(selectCars);
+
+  if (cars[0] === null) {
+    const router = useRouter();
+    useEffect(()=>{ router.replace('/'); });
+    return null;
+  };
 
   const listItems = cars.map((item) => {
-
-      const d = new Date(item.dateOfReceiving);
-
-      return (
-        <li key={item.id}>
-        <strong>{item.id}</strong> {d.toLocaleDateString()}<br/>
-        {item.content}
-        </li>
-      )
-    }
-  );
+    return (
+      <li key={item.id}>
+        <Car link='true' {...item}/>
+        <p></p>
+      </li>
+    )
+  });
  
   return (
     <div>
@@ -23,6 +35,4 @@ const Cars = ({cars}) => {
         </ul>
     </div>
   );
-};
-  
-export default Cars;
+}

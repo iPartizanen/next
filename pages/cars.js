@@ -2,15 +2,18 @@
 import { initializeStore } from '../init/store';
 import { initialDispatcher } from '../init/initialDispatcher';
 import { identifyUser } from "../helpers/identifyUser";
+import { readCars } from '../helpers/readCars';
 
 // Components
-import { User as UserComponent } from '../components/User';
 import { Menu } from '../components/Menu';
+import { Cars as CarsComponent } from '../components/Cars';
 
 export const getServerSideProps = async (context) => {
   const store = await initialDispatcher(context, initializeStore());
-  await identifyUser(context, store);
 
+  await identifyUser(context, store);
+  await readCars(store);
+  
   const initialReduxState = store.getState();
 
   return {
@@ -20,14 +23,13 @@ export const getServerSideProps = async (context) => {
   }
 };
 
-const User = () => {
-
+const Cars = () => {
   return (
     <>
       <Menu />
-      <UserComponent />
+      <CarsComponent />
     </>
   );
-};
+}
 
-export default User;
+export default Cars;

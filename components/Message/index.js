@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 // Instruments
 import { userTypes } from '../../bus/user/types';
 
-const Message = () => {
+export const Message = () => {
   const { user } = useSelector((state) => state);
 
   const { userType } = user;
@@ -19,5 +19,3 @@ const Message = () => {
     </>
   );
 }
-
-export default Message;
