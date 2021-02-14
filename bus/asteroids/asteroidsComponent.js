@@ -2,7 +2,7 @@
 import { useSelector } from 'react-redux';
 
 // Selectors
-import { selectAsteroidsEntries } from '../../bus/asteroids/selectors';
+import { selectAsteroidsEntries } from './selectors';
 
 export const Asteroids = () => {
   const entries = useSelector(selectAsteroidsEntries);

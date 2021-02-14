@@ -1,5 +1,5 @@
 // Hooks
-import { usePokemons } from '../../bus/pokemons/hooks/usePokemons';
+import { usePokemons } from './hooks/usePokemons';
 
 export const Pokemons = () => {
   const { pokemons } = usePokemons();
