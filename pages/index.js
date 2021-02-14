@@ -15,8 +15,8 @@ import { asteroidsActions } from '../bus/asteroids/actions';
 // Components
 import { Message } from '../components/Message';
 import { Menu } from '../components/Menu';
-import { Asteroids } from '../components/Asteroids';
-import { Pokemons } from '../components/Pokemons';
+import { Asteroids } from '../bus/asteroids/asteroidsComponent';
+import { Pokemons } from '../bus/pokemons/pokemonsComponent';
 
 export const getServerSideProps = async (context) => {
   const { store, stateUpdates } = await initialDispatcher(context, initializeStore());
