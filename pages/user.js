@@ -1,23 +1,18 @@
 // Instruments
 import { initializeStore } from '../init/store';
 import { initialDispatcher } from '../init/initialDispatcher';
-import { identifyUser } from "../helpers/identifyUser";
+import { identifyUser } from '../helpers/identifyUser';
+import { initialReduxStateProps } from '../helpers/initialReduxStateProps';
 
 // Components
 import { User as UserComponent } from '../components/User';
 import { Menu } from '../components/Menu';
 
 export const getServerSideProps = async (context) => {
-  const store = await initialDispatcher(context, initializeStore());
+  const { store, stateUpdates } = await initialDispatcher(context, initializeStore());
   await identifyUser(context, store);
 
-  const initialReduxState = store.getState();
-
-  return {
-    props: {
-      initialReduxState,
-    }
-  }
+  return initialReduxStateProps (store, stateUpdates);
 };
 
 const User = () => {

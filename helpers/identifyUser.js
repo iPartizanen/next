@@ -45,7 +45,11 @@ export const identifyUser = async (context, store) => {
       visitCounts: 0,
     };
     dataUsers.push(user);
-    nookies.set(context, 'userId', user.userId, { maxAge: 2592000000, httpOnly: true });
+    nookies.set(context, 'userId', user.userId, { 
+      maxAge: 2592000000, 
+      httpOnly: true,
+      path: '/',
+    });
   };
 
   try {
