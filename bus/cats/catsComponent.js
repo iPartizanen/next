@@ -11,6 +11,9 @@ import {
   selectCatsIsLoading
 } from './selectors';
 
+// Styles
+import styles from './styles.module.scss';
+
 export const Cats = () => {
   const dispatch = useDispatch();
   const entries = useSelector(selectCatsEntries);
@@ -31,10 +34,12 @@ export const Cats = () => {
   ));
 
   return (
-    <>
+    <section className={styles.cats}>
       <h1>Cats</h1>
       {spinnerJSX}
-      {entriesJSX}
-    </>
+      <div className={styles.list}>
+        {entriesJSX}
+      </div>
+    </section>
   )
 }

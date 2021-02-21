@@ -4,7 +4,7 @@ import { put, call, delay } from 'redux-saga/effects';
 // Instruments
 import { asteroidsActions } from '../../actions';
 import { verifyEnvironment } from "../../../../helpers/verifyEnvironment";
-import { developmentLogger, productionLogger } from "../../../../helpers/logger";
+import { developmentLogger, clientLogger } from "../../../../helpers/logger";
 
 export function* loadAsteroids () {
   const {
@@ -33,7 +33,7 @@ export function* loadAsteroids () {
       }
 
       if (isProduction) {
-        productionLogger.warn({
+        clientLogger.warn({
           url,
           method: 'GET',
           status,
@@ -43,6 +43,15 @@ export function* loadAsteroids () {
     } else {
       if (isDevelopment) {
         developmentLogger.info(`API GET request to ${url} has finished with status ${status}`);
+      };
+
+      if (isProduction) {
+        clientLogger.info({
+          url,
+          method: 'GET',
+          status,
+          message: response.statusText,
+        });
       }
     }
 
@@ -56,7 +65,7 @@ export function* loadAsteroids () {
     }
 
     if (isProduction) {
-      productionLogger.warn({
+      clientLogger.warn({
         url,
         method: 'GET',
         status,
