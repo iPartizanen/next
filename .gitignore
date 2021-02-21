@@ -19,7 +19,7 @@
 .DS_Store
 *.pem
 /data/users.json
-package-lock.json
+/logs
 
 # debug
 npm-debug.log*

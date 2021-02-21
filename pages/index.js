@@ -17,6 +17,7 @@ import { Message } from '../components/Message';
 import { Menu } from '../components/Menu';
 import { Asteroids } from '../bus/asteroids/asteroidsComponent';
 import { Pokemons } from '../bus/pokemons/pokemonsComponent';
+import { Cats } from '../bus/cats/catsComponent';
 
 export const getServerSideProps = async (context) => {
   const { store, stateUpdates } = await initialDispatcher(context, initializeStore());
@@ -53,6 +54,7 @@ const Home = () => {
     <>
       <Menu />
       <Message /> 
+      <Cats /> 
       <Asteroids />
       <Pokemons />
     </>
