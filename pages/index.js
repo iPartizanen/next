@@ -6,17 +6,14 @@ import { initializeStore } from '../init/store';
 import { initApollo } from '../init/initApollo';
 import { initialDispatcher } from '../init/initialDispatcher';
 import { identifyUser } from '../helpers/identifyUser';
-import { disableSaga } from '../helpers/disableSaga';
 import queryPokemons from '../bus/pokemons/hooks/usePokemons/gql/queryPokemons.graphql';
-
-// Actions
-import { asteroidsActions } from '../bus/asteroids/actions';
 
 // Components
 import { Message } from '../components/Message';
 import { Menu } from '../components/Menu';
 import { Asteroids } from '../bus/asteroids/asteroidsComponent';
 import { Pokemons } from '../bus/pokemons/pokemonsComponent';
+import { Cats } from '../bus/cats/catsComponent';
 
 export const getServerSideProps = async (context) => {
   const { store, stateUpdates } = await initialDispatcher(context, initializeStore());
@@ -27,10 +24,11 @@ export const getServerSideProps = async (context) => {
     });
   });
 
-  store.dispatch(asteroidsActions.loadAsteroidsAsync());
+  // uncomment for server-side saga
+  // store.dispatch(asteroidsActions.loadAsteroidsAsync());
   await identifyUser(context, store);
 
-  await disableSaga(store);
+  // await disableSaga(store);
 
   const currentPageReduxState = store.getState();
 
@@ -53,6 +51,7 @@ const Home = () => {
     <>
       <Menu />
       <Message /> 
+      <Cats /> 
       <Asteroids />
       <Pokemons />
     </>
