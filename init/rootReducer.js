@@ -7,6 +7,7 @@ import { newsReducer } from "../bus/news/reducer";
 import { discountsReducer } from "../bus/discounts/reducer";
 import { carsReducer } from "../bus/cars/reducer";
 import { asteroidsReducer } from "../bus/asteroids/reducer";
+import { catsReducer } from "../bus/cats/reducer";
 
 export const rootReducer = combineReducers({
   user: userReducer,
@@ -14,4 +15,5 @@ export const rootReducer = combineReducers({
   discounts: discountsReducer,
   cars: carsReducer,
   asteroids: asteroidsReducer,  
+  cats: catsReducer,
 });

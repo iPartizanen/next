@@ -1,6 +1,7 @@
 // Instruments
 import nookies from 'nookies';
 import { userTypes } from '../bus/user/types';
+import { getUniqueId } from './getUniqueId';
 
 // Actions
 import { userActions } from '../bus/user/actions';
@@ -8,8 +9,6 @@ import { userActions } from '../bus/user/actions';
 const fs = require('fs').promises;
 
 const USER_FILE_NAME = './data/users.json';
-
-const getUniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
 
 const calculateUserType = (visitCounts) =>
   (visitCounts >= 5) ? userTypes.USER_IS_FAMILY_MEMBER : 
