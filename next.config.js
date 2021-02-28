@@ -1,6 +1,6 @@
 // Core
-//const { DuplicatesPlugin } = require('inspectpack/plugin');   
-//const path = require('path');
+const { DuplicatesPlugin } = require('inspectpack/plugin');   
+const path = require('path');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CleanCss = require('clean-css');
 const withPlugins = require('next-compose-plugins');
@@ -23,24 +23,24 @@ module.exports = withPlugins([
   webpack: (config, { isServer }) => {
     const isProduction = process.env.NODE_ENV === 'production';
 
-    // const updatedAliases = {
-    //   ...config.resolve.alias,
-    //   'readable-stream': path.join(__dirname, './node_modules/readable-stream'),
-    //   inherits: path.join(__dirname, './node_modules/inherits'),
-    //   'safe-buffer': path.join(__dirname, './node_modules/safe-buffer'),
-    // };
+    const updatedAliases = {
+      ...config.resolve.alias,
+      'readable-stream': path.join(__dirname, './node_modules/readable-stream'),
+      inherits: path.join(__dirname, './node_modules/inherits'),
+      'safe-buffer': path.join(__dirname, './node_modules/safe-buffer'),
+    };
 
-    // config.resolve.alias = {
-    //   ...updatedAliases,
-    // };
+    config.resolve.alias = {
+      ...updatedAliases,
+    };
 
     if (isProduction) {
-      // config.plugins.push(
-      //   new DuplicatesPlugin({
-      //     verbose: true,
-      //     emitErrors: false,
-      //   }),
-      // );
+      config.plugins.push(
+        new DuplicatesPlugin({
+          verbose: true,
+          emitErrors: false,
+        }),
+      );
 
       config.optimization.minimizer.push(
         new OptimizeCssAssetsPlugin({
@@ -73,6 +73,10 @@ module.exports = withPlugins([
     }
 
     return config;
+  },
+  publicRuntimeConfig: {
+    JAVA_SCRIPT_LOADING_DELAY: 3500,
+    ANDROID_VERSION_FOR_DELAY: 8,
+    IOS_VERSION_FOR_DELAY: 12.5,
   }
-
 });

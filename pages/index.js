@@ -1,4 +1,5 @@
 // Core
+import Head from 'next/head';
 import * as R from 'ramda';
 
 // Instruments
@@ -14,6 +15,7 @@ import { Menu } from '../components/Menu';
 import { Asteroids } from '../bus/asteroids/asteroidsComponent';
 import { Pokemons } from '../bus/pokemons/pokemonsComponent';
 import { Cats } from '../bus/cats/catsComponent';
+import { Spinner } from '../components/Spinner';
 
 export const getServerSideProps = async (context) => {
   const { store, stateUpdates } = await initialDispatcher(context, initializeStore());
@@ -49,8 +51,12 @@ const Home = () => {
 
   return (
     <>
+      <Head>
+        <title>Home page</title>
+      </Head>
       <Menu />
       <Message /> 
+      <Spinner />
       <Cats /> 
       <Asteroids />
       <Pokemons />

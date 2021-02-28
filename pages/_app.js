@@ -1,6 +1,7 @@
 // Core
 import { Provider } from 'react-redux';
 import { ApolloProvider } from '@apollo/react-hooks';
+import Head from 'next/head';
 
 // Other
 import { useStore } from '../init/store';
@@ -11,12 +12,17 @@ function MyApp({ Component, pageProps }) {
   const apolloCLient = useApollo(pageProps.initialApolloState);
 
   return (
-    <Provider store={store}>
-      <ApolloProvider client={apolloCLient}>
-        <Component {...pageProps} />
-      </ApolloProvider>      
-    </Provider>      
-  )
+    <>
+      <Head>
+        <title>Common page</title>
+      </Head>
+      <Provider store={store}>
+        <ApolloProvider client={apolloCLient}>
+          <Component theme='default' {...pageProps} />
+        </ApolloProvider>      
+      </Provider>      
+    </>
+  );
 }
 
 export default MyApp

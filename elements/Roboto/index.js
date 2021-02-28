@@ -10,8 +10,7 @@ export const Roboto = () => (
           font-weight: 400;
           font-display: swap;
           unicode-range: U+000-5FF;
-          src: local('Roboto-Regular'),
-            url('/fonts/Roboto/Roboto-Regular.ttf') format('ttf');
+          src: url('/fonts/Roboto/Roboto-Regular.ttf');
         }
       `,
     }}
